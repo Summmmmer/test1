@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title></title>
+</head>
+<body>
+	<input type="text" id="txtName" />
+	<input type="text" id="txtTitle" />
+	<input type="text" id="txtWords" />
+	<button id="btn">按钮</button>
+	<div id="tblData"></div>
+<script src="https://apps.bdimg.com/libs/jquery/2.1.4/jquery.min.js"></script>
+<script type="text/javascript"> 
+   	function initDatabase() {
+   		var db = getCurrentDb();  //初始化数据库
+			db.transaction(function(trans){//启动一个事务，并设置回调函数
+					//执行创建表的Sql脚本
+					trans.executeSql("create table if not exists Demo(uName text null,title text null,words text null)",[],function(trans,msg){
+							//成功回调
+						},
+						function(trans,msg){
+							//失败回调
+						}
+					)
+			})
+	}
+	//获取或者创建
+	function getCurrentDb(){
+		var db = openDatabase('myDb','1.0','数据表',1024);
+		return db;
+	}
+        //显示所有数据库中的数据到页面上去
+        function showAllTheData() {
+            $("#tblData").empty();
+            var db = getCurrentDb();
+            db.transaction(function (trans) {
+                trans.executeSql("select * from Demo ", [], function (ts, data) {
+                    if (data) {
+                        for (var i = 0; i < data.rows.length; i++) {
+                            appendDataToTable(data.rows.item(i));//获取某行数据的json对象
+                        }
+                    }
+                }, function (ts, message) {alert(message);var tst = message;});
+            });
+        }
+        function appendDataToTable(data) {//将数据展示到表格里面
+            //uName,title,words
+            var txtName = data.uName;
+            var txtTitle = data.title;
+            var words = data.words;
+            var strHtml = "";
+            strHtml += "<tr>";
+            strHtml += "<td>"+txtName+"</td>";
+            strHtml += "<td>" + txtTitle + "</td>";
+            strHtml += "<td>" + words + "</td>";
+            strHtml += "</tr>";
+            $("#tblData").append(strHtml);
+        }
+
+	$(function(){
+		initDatabase();
+		$('#btn').on('click',function(){
+			var txtName = $("#txtName").val();
+            var txtTitle = $("#txtTitle").val();
+            var txtWords = $("#txtWords").val();
+            var db = getCurrentDb();
+            db.transaction(function(trans){
+            	trans.executeSql("insert into Demo(uName,title,words) values(?,?,?) ", [txtName, txtTitle, txtWords], function (ts, data) {
+                    }, function (ts, message) {
+                        alert(message);
+                    });
+            })
+            showAllTheData();
+		})
+	})
+</script> 
+</body>
+</html>

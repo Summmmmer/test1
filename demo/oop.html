@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title></title>
+</head>
+<body>
+
+<script src="https://apps.bdimg.com/libs/jquery/2.1.4/jquery.min.js"></script>
+<script type="text/javascript"> 
+    var cat = function(name,color){
+        this.name = name;
+        this.color = color;
+    }
+
+    //使用prototype，所有实例都是同一个内存地址 提高了运行效率
+    cat.prototype.type="动物";
+    cat.prototype.eat = function(){
+        alert('吃老鼠');
+    };
+
+    var cat1 = new cat('大黄','红色');
+    console.log('instanceof',cat1 instanceof cat);  
+    //判断原型对象和实例对象的关系
+
+    console.log('isPrototypeOf',cat.prototype.isPrototypeOf(cat1));
+    //判断prototype对象和实例对象的关系
+    
+    console.log('hasOwnProperty',cat.hasOwnProperty('name'));
+    console.log('hasOwnProperty',cat.hasOwnProperty('type'));
+    //判断属性是本地属性还是继承prototype对象的属性
+    
+    console.log('in','name' in cat1);
+    //判断实例是否含有某个属性
+    
+    
+</script> 
+</body>
+</html>
